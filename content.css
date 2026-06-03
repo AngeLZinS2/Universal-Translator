@@ -1,0 +1,83 @@
+/* content.css — Legenda Universal */
+
+#live-translator-overlay {
+  position: absolute;
+  bottom: 80px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: none !important;
+  z-index: 2147483647;
+  padding: 0 8%;
+  box-sizing: border-box;
+}
+
+#live-translator-overlay.pos-top {
+  top: 40px;
+  bottom: auto;
+  justify-content: flex-start;
+}
+
+.tt-subtitle-line {
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #ffffff;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  text-align: center;
+  padding: 6px 14px;
+  border-radius: 6px;
+  margin-top: 6px;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+  max-width: 92%;
+  word-wrap: break-word;
+  pointer-events: none !important;
+  animation: ttFadeIn 0.18s ease-out forwards;
+  transition: font-size 0.15s ease;
+}
+
+/* Ajustes automáticos quando o container entra em fullscreen nativo */
+:fullscreen #live-translator-overlay,
+:-webkit-full-screen #live-translator-overlay {
+  bottom: 110px; /* Sobe um pouco para fugir dos controles maiores de tela cheia */
+}
+
+:fullscreen #live-translator-overlay.pos-top,
+:-webkit-full-screen #live-translator-overlay.pos-top {
+  top: 60px;
+}
+
+/* Compatibilidade com classes de Fullscreen da Twitch e YouTube */
+.video-player--fullscreen #live-translator-overlay,
+.ytp-fullscreen #live-translator-overlay {
+  bottom: 110px;
+}
+
+.video-player--fullscreen #live-translator-overlay.pos-top,
+.ytp-fullscreen #live-translator-overlay.pos-top {
+  top: 60px;
+}
+
+@keyframes ttFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Ícones de palestrante */
+.tt-streamer {
+  color: #00ffcc;
+  font-weight: 700;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
+}
+
+.tt-guest {
+  color: #bf94ff;
+  font-weight: 700;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
+}
+
+.speaker-0 { border-left: 4px solid #00ffcc; }
+.speaker-1 { border-left: 4px solid #bf94ff; }

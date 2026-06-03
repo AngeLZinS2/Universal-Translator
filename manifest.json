@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Universal Live Translator",
+  "version": "1.0",
+  "description": "Legendas traduzidas em tempo real para qualquer plataforma de vídeo e lives.",
+  "permissions": [
+    "activeTab",
+    "tabCapture",
+    "storage",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "wss://api.deepgram.com/*"
+  ],
+  "icons": {
+    "16":  "icons/icon16.png",
+    "32":  "icons/icon32.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "32":  "icons/icon32.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["content.css"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["audio-processor.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Live Translator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0a0a0f;
+      --bg-panel: #111118;
+      --bg-card: #16161f;
+      --bg-input: #1c1c28;
+      --bg-hover: #22222f;
+      --text-main: #f0f0f8;
+      --text-sub: #c0c0d0;
+      --text-muted: #7878a0;
+      --brand: #9d7bff;
+      --brand-glow: rgba(157, 123, 255, 0.25);
+      --cyan: #00e5b0;
+      --cyan-glow: rgba(0, 229, 176, 0.25);
+      --border: rgba(255, 255, 255, 0.07);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      width: 400px;
+      background: var(--bg-base);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position: relative;
+      padding: 18px 20px 14px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: -20px;
+      width: 180px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(157, 123, 255, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      top: -20px;
+      right: 30px;
+      width: 120px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(0, 229, 176, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #9d7bff 0%, #00e5b0 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(157, 123, 255, 0.35);
+    }
+
+    .logo-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #fff;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      background: linear-gradient(90deg, #b89bff 0%, #00e5b0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 1px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-hover);
+    }
+
+    .icon-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--text-muted);
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      position: relative;
+      flex: 1;
+      padding: 10px 8px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color .2s;
+    }
+
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 20%;
+      right: 20%;
+      height: 2px;
+      border-radius: 2px 2px 0 0;
+      background: linear-gradient(90deg, var(--brand), var(--cyan));
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .tab-btn.active {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active::after {
+      opacity: 1;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-sub);
+    }
+
+    /* ── PANELS ── */
+    .tab-panel {
+      display: none;
+      padding: 18px 20px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+
+    .section-label:first-child {
+      margin-top: 0;
+    }
+
+    /* ── INPUT GROUP ── */
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      padding: 10px 38px 10px 13px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .input-wrap input:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
+
+    .input-wrap .eye-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .input-wrap .eye-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text-muted);
+    }
+
+    /* ── SELECT ── */
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      padding: 10px 36px 10px 13px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .select-wrap select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
+
+    .select-wrap svg {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 13px;
+      height: 13px;
+      fill: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* ── LANGS ROW ── */
+    .langs-row {
+      display: grid;
+      grid-template-columns: 1fr 32px 1fr;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .lang-swap {
+      width: 32px;
+      height: 38px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+
+    .lang-swap:hover {
+      border-color: var(--brand);
+      background: var(--bg-hover);
+    }
+
+    .lang-swap svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--text-muted);
+    }
+
+    /* ── TOGGLE CARD ── */
+    .toggle-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      cursor: pointer;
+      transition: all .25s;
+      margin-bottom: 10px;
+    }
+
+    .toggle-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-hover);
+    }
+
+    .toggle-card.on {
+      border-color: rgba(0, 229, 176, 0.3);
+      background: linear-gradient(135deg, rgba(0, 229, 176, 0.04), rgba(157, 123, 255, 0.04));
+    }
+
+    .toggle-card-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toggle-card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      background: var(--bg-input);
+      flex-shrink: 0;
+    }
+
+    .toggle-card-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toggle-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .toggle-card-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* toggle switch */
+    .sw {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .sw input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .sw-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      transition: .3s;
+    }
+
+    .sw-track::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      background: var(--text-muted);
+      transition: .3s;
+    }
+
+    .sw input:checked~.sw-track {
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+
+    .sw input:checked~.sw-track::before {
+      transform: translateX(18px);
+      background: #fff;
+    }
+
+    /* ── STATUS BOX ── */
+    .status-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all .25s;
+      margin-top: 6px;
+    }
+
+    .status-box:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-hover);
+    }
+
+    .status-box.active {
+      border-color: rgba(0, 229, 176, 0.35);
+      box-shadow: 0 0 20px rgba(0, 229, 176, 0.08);
+    }
+
+    .status-pulse {
+      position: relative;
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+    }
+
+    .status-pulse-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      transition: background .3s;
+    }
+
+    .status-pulse-ring {
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      transition: border-color .3s;
+    }
+
+    .status-box.active .status-pulse-dot {
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .status-box.active .status-pulse-ring {
+      border-color: rgba(0, 229, 176, 0.4);
+      animation: pulse-ring 1.5s ease-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
+    }
+
+    .status-info {
+      flex: 1;
+    }
+
+    .status-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .status-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .status-action {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-action svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--text-muted);
+      transition: fill .3s;
+    }
+
+    .status-box.active .status-action svg {
+      fill: var(--cyan);
+    }
+
+    /* ── APPEARANCE TAB ── */
+    .app-section {
+      margin-bottom: 18px;
+    }
+
+    .presets-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .preset-card {
+      border-radius: var(--radius-sm);
+      padding: 10px 6px 8px;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      transition: all .2s;
+    }
+
+    .preset-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    .preset-card.selected {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
+
+    .preset-preview {
+      width: 100%;
+      height: 34px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .preset-name {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Controls */
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .ctrl-row label {
+      font-size: 11px;
+      color: var(--text-muted);
+      min-width: 100px;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    .ctrl-row input[type=range] {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 4px;
+      outline: none;
+      background: linear-gradient(to right, var(--brand) 0%, var(--brand) var(--pct, 50%), var(--bg-input) var(--pct, 50%));
+      border: 1px solid var(--border);
+    }
+
+    .ctrl-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--brand);
+      box-shadow: 0 0 6px var(--brand-glow);
+      cursor: pointer;
+      border: 2px solid var(--bg-base);
+    }
+
+    .ctrl-val {
+      font-size: 11px;
+      color: var(--text-sub);
+      min-width: 36px;
+      text-align: right;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .color-row label {
+      font-size: 11px;
+      color: var(--text-muted);
+      min-width: 100px;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    .color-swatch {
+      position: relative;
+      width: 40px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .color-swatch input[type=color] {
+      position: absolute;
+      inset: -4px;
+      width: calc(100% + 8px);
+      height: calc(100% + 8px);
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+    }
+
+    .color-swatch-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: 5px;
+      pointer-events: none;
+    }
+
+    .toggle-row-ctrl {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .toggle-row-ctrl span {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .pos-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .pos-btn {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+      font-family: inherit;
+    }
+
+    .pos-btn.selected {
+      border-color: var(--brand);
+      color: var(--brand);
+      background: rgba(157, 123, 255, 0.08);
+    }
+
+    .pos-btn:hover:not(.selected) {
+      border-color: var(--border-hover);
+      color: var(--text-sub);
+    }
+
+    .font-select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      appearance: none;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .font-select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
+
+    /* Subtitle preview */
+    .sub-preview {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 14px;
+      height: 90px;
+      background: linear-gradient(135deg, #0d0d1a 0%, #1a0d30 50%, #0d1a1a 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 12px;
+    }
+
+    .sub-preview::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    #previewSubtitle {
+      max-width: 90%;
+      text-align: center;
+      transition: all .25s;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── ABOUT TAB ── */
+    .about-wrap {
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .about-logo-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      margin: 0 auto 14px;
+      background: linear-gradient(135deg, #9d7bff 0%, #00e5b0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(157, 123, 255, 0.4);
+    }
+
+    .about-logo-wrap svg {
+      width: 32px;
+      height: 32px;
+      fill: #fff;
+    }
+
+    .about-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      background: linear-gradient(90deg, #b89bff, #00e5b0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .about-ver {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .about-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.7;
+      margin-bottom: 18px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .about-badges {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .badge b {
+      color: var(--brand);
+    }
+
+    .developer-credit {
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding-top: 16px;
+      border-top: 1px dashed var(--border);
+      max-width: 200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .developer-credit a {
+      color: var(--cyan);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .developer-credit a:hover {
+      color: #fff;
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    /* ── FAQ TAB ── */
+    .faq-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+    .faq-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-title span {
+      font-size: 16px;
+    }
+    .faq-desc {
+      font-size: 11px;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+    .faq-desc b {
+      color: var(--cyan);
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <div class="header-row">
+      <div class="logo">
+        <div class="logo-icon" style="background:none;box-shadow:none;overflow:hidden;padding:0;">
+          <img src="icons/icon128.png" alt="Live Translator" style="width:34px;height:34px;object-fit:contain;border-radius:10px;">
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">Universal Translator</span>
+          <span class="logo-sub">Real-time subtitle engine</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="icon-btn" title="Informações">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TABS ══ -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-geral">Geral</button>
+    <button class="tab-btn" data-tab="tab-aparencia">Aparência</button>
+    <button class="tab-btn" data-tab="tab-sobre">Sobre</button>
+    <button class="tab-btn" data-tab="tab-duvidas">Ajuda</button>
+  </div>
+
+  <!-- ══════════ TAB GERAL ══════════ -->
+  <div id="tab-geral" class="tab-panel active">
+
+    <div class="field">
+      <label class="field-label">Deepgram API Key</label>
+      <div class="input-wrap">
+        <input type="password" id="apiKey" placeholder="Cole sua API Key aqui..."
+          value="">
+        <button class="eye-btn" id="togglePassword">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="section-label">Idiomas</div>
+    <div class="langs-row">
+      <div class="field" style="margin:0">
+        <label class="field-label">Origem (Live)</label>
+        <div class="select-wrap">
+          <select id="sourceLang">
+            <option value="en">🇺🇸 Inglês (EUA)</option>
+            <option value="pt-BR">🇧🇷 Português (BR)</option>
+            <option value="ko">🇰🇷 Coreano</option>
+            <option value="es">🇪🇸 Espanhol</option>
+            <option value="ja">🇯🇵 Japonês</option>
+            <option value="fr">🇫🇷 Francês</option>
+            <option value="de">🇩🇪 Alemão</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="ru">🇷🇺 Russo</option>
+            <option value="zh">🇨🇳 Chinês</option>
+          </select>
+          <svg viewBox="0 0 24 24">
+            <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+          </svg>
+        </div>
+      </div>
+      <div class="lang-swap" id="swapLangs" title="Inverter idiomas">
+        <svg viewBox="0 0 24 24">
+          <path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z" />
+        </svg>
+      </div>
+      <div class="field" style="margin:0">
+        <label class="field-label">Destino (Legenda)</label>
+        <div class="select-wrap">
+          <select id="targetLang">
+            <option value="pt-BR">🇧🇷 Português (BR)</option>
+            <option value="pt">🇵🇹 Português (PT)</option>
+            <option value="en">🇺🇸 Inglês</option>
+            <option value="es">🇪🇸 Espanhol</option>
+            <option value="fr">🇫🇷 Francês</option>
+            <option value="de">🇩🇪 Alemão</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="ja">🇯🇵 Japonês</option>
+          </select>
+          <svg viewBox="0 0 24 24">
+            <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:16px;">Configurações</div>
+
+    <!-- Esports Mode -->
+    <div class="toggle-card" id="esportsModeBox">
+      <div class="toggle-card-left">
+        <div class="toggle-card-icon">🎮</div>
+        <div class="toggle-card-text">
+          <div class="toggle-card-title">Modo Esports</div>
+          <div class="toggle-card-sub">Otimizado para narrações de jogos</div>
+        </div>
+      </div>
+      <label class="sw" id="esportsSwitchLabel">
+        <input type="checkbox" id="esportsMode">
+        <span class="sw-track"></span>
+      </label>
+    </div>
+
+    <div class="field" id="esportsGameField" style="display: none; margin-top: -4px; margin-bottom: 12px;">
+      <div class="select-wrap">
+        <select id="esportsGame">
+          <option value="geral">🎮 Qual Jogo? (Geral)</option>
+          <option value="cs">🔫 CS2 / CS:GO</option>
+          <option value="lol">🧙‍♂️ League of Legends</option>
+          <option value="valorant">🎯 Valorant</option>
+          <option value="marvel">🦸‍♂️ Marvel Rivals</option>
+        </select>
+        <svg viewBox="0 0 24 24">
+          <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Status / Toggle -->
+    <div class="status-box" id="toggleBtn">
+      <div class="status-pulse">
+        <div class="status-pulse-dot"></div>
+        <div class="status-pulse-ring"></div>
+      </div>
+      <div class="status-info">
+        <div class="status-title">Status do Sistema</div>
+        <div class="status-sub" id="statusText">Sistema inativo — clique para ligar</div>
+      </div>
+      <div class="status-action">
+        <svg id="statusIcon" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
+        </svg>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════ TAB APARÊNCIA ══════════ -->
+  <div id="tab-aparencia" class="tab-panel">
+
+    <div class="section-label" style="margin-top:0">Presets</div>
+    <div class="presets-grid">
+      <div class="preset-card selected" data-preset="padrao">
+        <div class="preset-preview" style="background:rgba(0,0,0,0.78)"><span
+            style="color:#fff;text-shadow:1px 1px 0 #000;font-weight:700;">Aa</span></div>
+        <span class="preset-name">Padrão</span>
+      </div>
+      <div class="preset-card" data-preset="cinema">
+        <div class="preset-preview" style="background:#000"><span
+            style="color:#FFE066;font-style:italic;font-weight:700;">Aa</span></div>
+        <span class="preset-name">Cinema</span>
+      </div>
+      <div class="preset-card" data-preset="minimal">
+        <div class="preset-preview" style="background:transparent;border:1px dashed rgba(255,255,255,0.15)"><span
+            style="color:#fff;text-shadow:2px 2px 6px #000;font-weight:700;">Aa</span></div>
+        <span class="preset-name">Minimal</span>
+      </div>
+      <div class="preset-card" data-preset="neon">
+        <div class="preset-preview" style="background:rgba(10,10,30,0.9)"><span
+            style="color:#00e5b0;text-shadow:0 0 8px #00e5b0;font-weight:700;">Aa</span></div>
+        <span class="preset-name">Neon</span>
+      </div>
+    </div>
+
+    <div class="section-label">Preview</div>
+    <div class="sub-preview">
+      <div id="previewSubtitle">Texto de exemplo da legenda.</div>
+    </div>
+
+    <div class="section-label">Tipografia</div>
+    <div class="ctrl-row">
+      <label>Tamanho</label>
+      <input type="range" id="fontSize" min="14" max="48" value="22" step="1">
+      <span class="ctrl-val" id="fontSizeVal">22px</span>
+    </div>
+    <select class="font-select" id="fontFamily">
+      <option value="Helvetica, Arial, sans-serif">Helvetica (Padrão)</option>
+      <option value="'Courier New', monospace">Courier New (Mono)</option>
+      <option value="Georgia, serif">Georgia (Serif)</option>
+      <option value="Impact, sans-serif">Impact (Bold)</option>
+      <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
+    </select>
+
+    <div class="section-label">Cores</div>
+    <div class="color-row">
+      <label>Texto</label>
+      <div class="color-swatch">
+        <div class="color-swatch-bg" id="textColorBg" style="background:#ffffff"></div>
+        <input type="color" id="textColor" value="#ffffff">
+      </div>
+    </div>
+    <div class="color-row">
+      <label>Fundo</label>
+      <div class="color-swatch">
+        <div class="color-swatch-bg" id="bgColorBg" style="background:#000000"></div>
+        <input type="color" id="bgColor" value="#000000">
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Opacidade Fundo</label>
+      <input type="range" id="bgOpacity" min="0" max="100" value="75" step="5">
+      <span class="ctrl-val" id="bgOpacityVal">75%</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Arredondamento</label>
+      <input type="range" id="borderRadius" min="0" max="24" value="6" step="1">
+      <span class="ctrl-val" id="borderRadiusVal">6px</span>
+    </div>
+
+    <div class="section-label">Opções</div>
+    <div class="toggle-row-ctrl">
+      <span>Sombra no texto</span>
+      <label class="sw"><input type="checkbox" id="textShadow" checked><span class="sw-track"></span></label>
+    </div>
+    <div class="toggle-row-ctrl">
+      <span>Ícones de voz (👑 🎤)</span>
+      <label class="sw"><input type="checkbox" id="showSpeakerIcon" checked><span class="sw-track"></span></label>
+    </div>
+
+    <div class="section-label">Posição</div>
+    <div class="pos-row">
+      <button class="pos-btn" data-pos="top">⬆ Topo</button>
+      <button class="pos-btn selected" data-pos="bottom">⬇ Baixo</button>
+    </div>
+
+  </div>
+
+  <!-- ══════════ TAB SOBRE ══════════ -->
+  <div id="tab-sobre" class="tab-panel">
+    <div class="about-wrap">
+      <div class="about-logo-wrap" style="background:none;box-shadow:0 8px 32px rgba(33,150,243,0.3);padding:0;overflow:hidden;">
+        <img src="icons/icon128.png" alt="Live Translator" style="width:64px;height:64px;object-fit:contain;border-radius:18px;">
+      </div>
+      <div class="about-name">Universal Translator</div>
+      <div class="about-ver">Versão 1.0.0 · Universal Edition</div>
+      <div class="about-desc">
+        Legendas traduzidas em tempo real para qualquer plataforma de vídeo. Compatível com Twitch, YouTube, Kick e
+        mais.
+      </div>
+      <div class="about-badges">
+        <div class="badge">Transcrição por <b>Deepgram</b></div>
+        <div class="badge">Tradução por <b>Google</b></div>
+        <div class="badge">🎮 Modo Esports</div>
+        <div class="badge">🎙 Diarization</div>
+      </div>
+      
+      <div class="developer-credit">
+        Desenvolvido por <a href="https://github.com/AngeLZinS2" target="_blank" title="Ver GitHub do Desenvolvedor">AngeLZinS2</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB AJUDA / FAQ ══════════ -->
+  <div id="tab-duvidas" class="tab-panel">
+    <div class="section-label" style="margin-top:0">Dúvidas Frequentes</div>
+    
+    <div class="faq-wrap">
+      <div class="faq-item">
+        <div class="faq-title"><span>🖥️</span> O Fullscreen não funciona?</div>
+        <div class="faq-desc">
+          Isso é um <b>recurso de segurança nativo do Google Chrome</b>. 
+          Sempre que uma extensão captura o áudio de uma aba, o navegador impede o "Fullscreen Verdadeiro" para evitar que páginas falsifiquem sua tela.<br><br>
+          <b>Como resolver:</b> Ligue a extensão, clique no botão de tela cheia do site e então <b>aperte F11 no seu teclado</b>. A tela cheia funcionará perfeitamente!
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-title"><span>🔒</span> É seguro? Grava meus dados?</div>
+        <div class="faq-desc">
+          <b>A extensão é 100% segura e não possui rastreadores.</b><br>
+          O aviso do navegador de "Captura de Tela/Áudio" aparece porque precisamos escutar o áudio da live para poder traduzi-lo.<br>
+          O áudio capturado é enviado <b>diretamente aos servidores oficiais da Deepgram</b> (para transformar a voz em texto) e depois ao <b>Google Translate</b>. Nós não armazenamos áudio, textos ou nenhum dado pessoal seu.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-title"><span>🛑</span> A tradução parou de funcionar?</div>
+        <div class="faq-desc">
+          Como usamos o sistema gratuito do <b>Google Tradutor</b>, se você usar a extensão por muitas horas seguidas, o Google pode bloquear o seu IP temporariamente por excesso de uso.<br>
+          Caso as legendas parem de aparecer (mesmo com a extensão ligada), basta aguardar algumas horas para que o seu acesso seja liberado automaticamente pelo Google.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-title"><span>🎮</span> O que é o Modo Esports?</div>
+        <div class="faq-desc">
+          Narrações de jogos (como CS:GO, LoL, Valorant) são muito rápidas e cheias de jargões.<br>
+          O <b>Modo Esports</b> reduz o delay de captura (trazendo as legendas mais rápido) e ensina a Inteligência Artificial a reconhecer palavras gamer como <i>"clutch"</i>, <i>"ace"</i>, e <i>"gank"</i>.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-title"><span>🔑</span> Como obter uma API Key?</div>
+        <div class="faq-desc">
+          A extensão precisa de uma chave gratuita da Deepgram para funcionar.<br>
+          1. Acesse <b>console.deepgram.com</b> e crie uma conta gratuita.<br>
+          2. No painel, vá em <b>API Keys</b> e clique em <b>Create a New API Key</b>.<br>
+          3. Copie o código gerado e cole no campo "Deepgram API Key" na aba Geral desta extensão.<br>
+          <i>(A conta gratuita oferece fundos suficientes para meses de uso diário.)</i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
